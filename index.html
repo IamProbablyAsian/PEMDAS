@@ -1,21 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PEMDAS Space Quest</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div id="game-container">
-        <h1>PEMDAS Space Quest</h1>
-        <p id="score">Score: 0</p> <!-- Score display added here -->
-        <p id="question">Solve the expression: </p>
-        <input type="text" id="answer" placeholder="Enter your answer" autofocus>
-        <button onclick="submitAnswer()">Submit</button>
-        <p id="feedback"></p>
-        <button id="next" onclick="generateQuestion()" style="display:none;">Next Question</button>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Space Mono', monospace; /* This is a Google Font that gives a space-like feel */
+    background: #0a0a23; /* Dark blue background to represent space */
+    color: #ffffff; /* White text color for better contrast */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-image: url('images/space-background.jpg'); /* A space-themed background image */
+    background-size: cover;
+}
+
+#game-container {
+    width: 90%;
+    max-width: 600px;
+    background: rgba(0, 0, 0, 0.8); /* Semi-transparent background for the container */
+    border: 1px solid #ffffff; /* White border for the container */
+    padding: 20px;
+    border-radius: 10px; /* Rounded corners for the container */
+    box-shadow: 0px 0px 10px 2px #0a0a12; /* Subtle outer glow for a floating effect */
+}
+
+input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #61dafb; /* Light blue border for the input field */
+    background: #000000; /* Dark background for the input field */
+    color: #61dafb; /* Light blue text color */
+}
+
+button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: #61dafb; /* Light blue background for buttons */
+    border: none;
+    border-radius: 5px; /* Rounded corners for buttons */
+    color: #000000; /* Black text color for buttons */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effects */
+}
+
+button:hover {
+    background-color: #ffffff; /* Change button background to white on hover */
+    color: #0a0a23; /* Change button text color to dark blue on hover */
+}
+
+#score {
+    font-size: 1.5em; /* Larger font size for the score */
+    margin-bottom: 10px; /* Space below the score */
+}
+
+#feedback {
+    margin-top: 10px; /* Space above the feedback */
+    height: 2em; /* Fixed height for the feedback area */
+}
