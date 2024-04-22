@@ -9,13 +9,12 @@ let timer; // Timer for game duration
 let gameDuration = 600; // Game duration in seconds (10 minutes)
 let timerStarted = false; // Flag to check if the timer has started
 
-// Starts the timer
 function startTimer(duration) {
     if (!timerStarted) {
         timerStarted = true;
         timer = duration;
         let minutes, seconds;
-        let timerInterval = setInterval(function() {
+        let timerInterval = setInterval(function () {
             minutes = parseInt(timer / 60, 10);
             seconds = parseInt(timer % 60, 10);
 
@@ -32,7 +31,6 @@ function startTimer(duration) {
     }
 }
 
-// Ends the game when the time is up
 function endGame() {
     document.getElementById('feedback').textContent = 'Time is up! Your final score is ' + score + '.';
     document.getElementById('answer').disabled = true;
@@ -40,45 +38,35 @@ function endGame() {
     document.getElementById('next').style.display = 'none';
 }
 
-// Generates a mathematical expression using user-friendly operators for display
 function generateExpression() {
     const ops = ['+', '-', '×', '÷'];
-    const nums = [1, 2, 3, 4].map(() => Math.floor(Math.random() * 10) + 1);  // Four numbers for a more complex expression
+    const nums = [1, 2, 3, 4].map(() => Math.floor(Math.random() * 10) + 1);
     const chosenOps = [0, 1, 2].map(() => ops[Math.floor(Math.random() * ops.length)]);
-    
-    // Randomly decides where to place parentheses
-    let useParens = Math.floor(Math.random() * 5);  // 0 to 4, more options for different paren placements
-    let expression;
 
-    // Depending on the random number, construct different expressions with parentheses
-    switch (useParens) {
-        case 0: // No parentheses
-            expression = `${nums[0]} ${chosenOps[0]} ${nums[1]} ${chosenOps[1]} ${nums[2]} ${chosenOps[2]} ${nums[3]}`;
-            break;
-        case 1: // Parentheses around the first two numbers
+    // Randomly decide whether to include parentheses
+    let includeParens = Math.random() < 0.5; // 50% chance to include parentheses
+    let expression = '';
+
+    if (includeParens) {
+        // Choose a random position to insert parentheses
+        const startPos = Math.floor(Math.random() * 2); // 0 or 1 for the position of the opening parenthesis
+        if (startPos === 0) {
             expression = `(${nums[0]} ${chosenOps[0]} ${nums[1]}) ${chosenOps[1]} ${nums[2]} ${chosenOps[2]} ${nums[3]}`;
-            break;
-        case 2: // Parentheses around the last two numbers
+        } else {
             expression = `${nums[0]} ${chosenOps[0]} ${nums[1]} ${chosenOps[1]} (${nums[2]} ${chosenOps[2]} ${nums[3]})`;
-            break;
-        case 3: // Parentheses around the first and last operations
-            expression = `(${nums[0]} ${chosenOps[0]} ${nums[1]}) ${chosenOps[1]} ${nums[2]} ${chosenOps[2]} (${nums[3]})`;
-            break;
-        case 4: // Parentheses in the middle operations
-            expression = `${nums[0]} ${chosenOps[0]} (${nums[1]} ${chosenOps[1]} ${nums[2]}) ${chosenOps[2]} ${nums[3]}`;
-            break;
+        }
+    } else {
+        expression = `${nums[0]} ${chosenOps[0]} ${nums[1]} ${chosenOps[1]} ${nums[2]} ${chosenOps[2]} ${nums[3]}`;
     }
-    
-    return expression.replace(/×/g, '*').replace(/÷/g, '/');
+
+    return expression.replace(/\*/g, '×').replace(/\//g, '÷'); // Display-friendly operators
 }
 
-// Displays the expression and prepares it for evaluation
 function displayExpression(expression) {
     document.getElementById('question').innerText = 'Solve the expression: ' + expression;
-    window.currentExpression = expression.replace(/×/g, '*').replace(/÷/g, '/');
+    window.currentExpression = expression.replace(/×/g, '*').replace(/÷/g, '/'); // Convert back to JavaScript operators for evaluation
 }
 
-// Sets up a new question
 function generateQuestion() {
     const newExpression = generateExpression();
     displayExpression(newExpression); // Display with friendly symbols
@@ -87,7 +75,6 @@ function generateQuestion() {
     document.getElementById('next').style.display = 'none';
 }
 
-// Handles the answer submission
 function submitAnswer() {
     if (!timerStarted) {
         startTimer(gameDuration); // Start the timer after the first answer
@@ -102,7 +89,7 @@ function submitAnswer() {
     } else {
         document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
     }
-    
+
     document.getElementById('score').innerText = `Score: ${score}`;
     document.getElementById('next').style.display = 'block'; // Show the "Next Question" button
 }
