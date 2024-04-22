@@ -33,18 +33,36 @@ function endGame() {
 }
 
 function generateExpression() {
-    // Your existing expression generation logic
-    // ...
+    const ops = ['+', '-', '*', '/'];
+    const nums = [1, 2, 3].map(() => Math.floor(Math.random() * 10) + 1);
+    const chosenOps = [0, 1].map(() => ops[Math.floor(Math.random() * ops.length)]);
+    const useParens = Math.random() > 0.5; // 50% chance to include parentheses
+    let expression = `${nums[0]} ${formatOperator(chosenOps[0])} ${nums[1]} ${formatOperator(chosenOps[1])} ${nums[2]}`;
+    if (useParens) {
+        expression = `(${expression}) ${formatOperator(chosenOps[1])} ${Math.floor(Math.random() * 10) + 1}`;
+    }
+    return expression;
+}
+
+function formatOperator(op) {
+    switch (op) {
+        case '/': return '÷';
+        case '*': return '×';
+        default: return op;
+    }
 }
 
 function generateQuestion() {
-    // Your existing question generation logic
-    // ...
+    const expression = generateExpression();
+    document.getElementById('question').innerText = 'Solve the expression: ' + expression;
+    window.currentExpression = expression.replace('÷', '/').replace('×', '*'); // Replace visible operators back to eval-able operators
+    document.getElementById('answer').value = '';
+    document.getElementById('feedback').innerText = '';
+    document.getElementById('next').style.display = 'none';
 }
 
 function submitAnswer() {
-    // Start the timer after the first answer
-    startTimer(gameDuration);
+    startTimer(gameDuration); // Start the timer after the first answer if not already started
 
     const userAnswer = parseFloat(document.getElementById('answer').value);
     const correctAnswer = eval(window.currentExpression).toFixed(2); // Round to 2 decimal places
