@@ -19,6 +19,7 @@ body, html {
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    position: relative; /* Ensure positioning is relative for contained elements */
 }
 
 input[type="text"], button {
@@ -40,6 +41,13 @@ button {
     cursor: pointer;
     background-color: #61dafb;
     color: #0F2027;
+}
+
+#timer {
+    font-size: 20px; /* Increase font size for better visibility */
+    color: #FFD700; /* Change color to gold for emphasis */
+    margin-top: 10px; /* Ensure margin for separation */
+    font-weight: bold; /* Make font bold for better readability */
 }
 
 #feedback, #score {
