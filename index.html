@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEMDAS Space Quest</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>PEMDAS Space Quest</h1>
+        <p id="question">Solve the expression: </p>
+        <input type="text" id="answer" placeholder="Enter your answer" autofocus>
+        <button onclick="submitAnswer()">Submit</button>
+        <p id="feedback"></p>
+        <button id="next" onclick="generateQuestion()" style="display:none;">Next Question</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
