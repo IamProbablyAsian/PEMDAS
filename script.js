@@ -3,9 +3,14 @@ let timer; // Timer for game duration
 let gameDuration = 600; // Game duration in seconds (10 minutes)
 let timerStarted = false; // Flag to check if the timer has started
 
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('submit').addEventListener('click', submitAnswer);
+    document.getElementById('next').addEventListener('click', generateQuestion);
+});
+
 function startTimer(duration) {
     if (!timerStarted) {
-        timerStarted = true; // Set the flag to true so timer only starts once
+        timerStarted = true;
         timer = duration;
         let minutes, seconds;
         let timerInterval = setInterval(function () {
@@ -70,7 +75,3 @@ function submitAnswer() {
     document.getElementById('score').innerText = `Score: ${score}`;
     document.getElementById('next').style.display = 'inline'; // Make sure this is visible
 }
-
-document.getElementById('next').addEventListener('click', generateQuestion); // Ensure this is correctly set
-
-window.onload = generateQuestion;
