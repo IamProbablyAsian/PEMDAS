@@ -1,12 +1,12 @@
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('submit').addEventListener('click', submitAnswer);
+    document.getElementById('next').addEventListener('click', generateQuestion);
+});
+
 let score = 0; // Initialize score
 let timer; // Timer for game duration
 let gameDuration = 600; // Game duration in seconds (10 minutes)
 let timerStarted = false; // Flag to check if the timer has started
-
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('submit').addEventListener('click', submitAnswer);
-    document.getElementById('next').addEventListener('click', generateQuestion);
-});
 
 function startTimer(duration) {
     if (!timerStarted) {
@@ -41,30 +41,28 @@ function generateExpression() {
     const ops = ['+', '-', '*', '÷'];
     const nums = [1, 2, 3].map(() => Math.floor(Math.random() * 10) + 1);
     const chosenOps = [0, 1].map(() => ops[Math.floor(Math.random() * ops.length)]);
-    const useParens = Math.random() > 0.5; // 50% chance to include parentheses
     let expression = `${nums[0]} ${chosenOps[0]} ${nums[1]} ${chosenOps[1]} ${nums[2]}`;
-    if (useParens) {
-        expression = `(${expression}) ${chosenOps[1]} ${Math.floor(Math.random() * 10) + 1}`;
-    }
-    return expression.replace('÷', '/').replace('×', '*'); // Use correct operators for calculation
+    return expression;
 }
 
 function generateQuestion() {
+    console.log("generateQuestion triggered");
     const expression = generateExpression();
-    document.getElementById('question').innerText = 'Solve the expression: ' + expression;
-    window.currentExpression = expression.replace('÷', '/').replace('×', '*'); // Update for eval
+    document.getElementById('question').innerText = 'Solve the expression: ' + expression.replace('÷', '/').replace('×', '*');
+    window.currentExpression = expression;
     document.getElementById('answer').value = '';
     document.getElementById('feedback').innerText = '';
     document.getElementById('next').style.display = 'none';
 }
 
 function submitAnswer() {
+    console.log("submitAnswer triggered");
     if (!timerStarted) {
-        startTimer(gameDuration); // Start the timer after the first answer
+        startTimer(gameDuration);
     }
 
     const userAnswer = parseFloat(document.getElementById('answer').value);
-    const correctAnswer = eval(window.currentExpression).toFixed(2); // Round to 2 decimal places
+    const correctAnswer = eval(window.currentExpression.replace('÷', '/').replace('×', '*')).toFixed(2);
 
     if (Math.abs(userAnswer - correctAnswer) < 0.01) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
@@ -73,5 +71,5 @@ function submitAnswer() {
         document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
     }
     document.getElementById('score').innerText = `Score: ${score}`;
-    document.getElementById('next').style.display = 'inline'; // Make sure this is visible
+    document.getElementById('next').style.display = 'block';
 }
