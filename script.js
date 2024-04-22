@@ -35,8 +35,13 @@ function submitAnswer() {
 }
 
 function generateSolution(expression) {
-    // Placeholder for a future feature to provide step-by-step solutions.
-    return 'Step-by-step solution not yet implemented.';
+    // Simple explanation text for PEMDAS
+    let solution = "Remember PEMDAS: Parentheses, Exponents, Multiplication and Division (from left to right), Addition and Subtraction (from left to right). ";
+    solution += "Start with any calculations inside parentheses, then move on to exponents. ";
+    solution += "Next, perform any multiplications and divisions as they appear from left to right. ";
+    solution += "Finally, do the additions and subtractions from left to right.";
+    return solution;
 }
+
 
 window.onload = generateQuestion;
