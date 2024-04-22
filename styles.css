@@ -2,10 +2,8 @@ body, html {
     height: 100%;
     margin: 0;
     font-family: 'Courier New', monospace;
-    background: #0F2027; /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #2C5364, #203A43, #0F2027); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #2C5364, #203A43, #0F2027); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    color: #FFFFFF;
+    background: #0F2027;  /* Dark blue background */
+    color: white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,41 +13,28 @@ body, html {
 #game-container {
     width: 90%;
     max-width: 600px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    position: relative; /* Ensure positioning is relative for contained elements */
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);  /* Slightly transparent white */
 }
 
 input[type="text"], button {
-    border: 2px solid #FFFFFF;
-    background: transparent;
-    color: #FFFFFF;
-    margin: 10px 0;
-    padding: 10px;
     width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 2px solid #61dafb;  /* Light blue border */
+    background-color: #0F2027;  /* Matching the body background */
+    color: white;
     font-family: 'Courier New', monospace;
-}
-
-input[type="text"] {
-    border-color: #61dafb;
-    color: #61dafb;
 }
 
 button {
     cursor: pointer;
-    background-color: #61dafb;
+    background-color: #61dafb;  /* Light blue background for buttons */
     color: #0F2027;
 }
 
-#timer {
-    font-size: 20px; /* Increase font size for better visibility */
-    color: #FFD700; /* Change color to gold for emphasis */
-    margin-top: 10px; /* Ensure margin for separation */
-    font-weight: bold; /* Make font bold for better readability */
-}
-
-#feedback, #score {
-    margin-top: 20px;
+#timer, #score {
+    font-size: 20px;
+    margin-top: 10px;
 }
