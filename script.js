@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     generateQuestion(); // Call this function as soon as the DOM is fully loaded
 });
 
-
 let score = 0; // Initialize score
 let timer; // Timer for game duration
 let gameDuration = 600; // Game duration in seconds (10 minutes)
@@ -47,14 +46,13 @@ function generateExpression() {
     return expression;
 }
 
-
 function generateQuestion() {
     console.log("Calling generateQuestion"); // Check if function is called
     const expression = generateExpression();
     console.log("Generated Expression: ", expression); // Log the expression to see what is generated
 
     if(expression) {
-        document.getElementById('question').innerText = 'Solve the expression: ' + expression.replace('÷', '/').replace('×', '*');
+        document.getElementById('question').innerText = 'Solve the expression: ' + expression;
         window.currentExpression = expression;
     } else {
         console.error("Failed to generate expression");
@@ -65,7 +63,6 @@ function generateQuestion() {
     document.getElementById('next').style.display = 'none';
 }
 
-
 function submitAnswer() {
     console.log("submitAnswer triggered");
     if (!timerStarted) {
@@ -73,7 +70,7 @@ function submitAnswer() {
     }
 
     const userAnswer = parseFloat(document.getElementById('answer').value);
-    const correctAnswer = eval(window.currentExpression.replace('÷', '/').replace('×', '*')).toFixed(2);
+    const correctAnswer = eval(window.currentExpression).toFixed(2);
 
     if (Math.abs(userAnswer - correctAnswer) < 0.01) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
@@ -82,5 +79,5 @@ function submitAnswer() {
         document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
     }
     document.getElementById('score').innerText = `Score: ${score}`;
-    document.getElementById('next').style.display = 'block';
+    document.getElementById('next').style.display = 'block'; // Change 'none' to 'block'
 }
