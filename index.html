@@ -9,13 +9,11 @@
 <body>
     <div id="game-container">
         <h1>PEMDAS Space Quest</h1>
-        <div id="scoreboard">
-            <p id="score">Score: 0</p>
-        </div>
         <p id="question">Solve the expression:</p>
         <input type="text" id="answer" placeholder="Enter your answer" autofocus>
         <button onclick="submitAnswer()">Submit</button>
         <p id="feedback"></p>
+        <p id="score">Score: 0</p>
         <button id="next" onclick="generateQuestion()" style="display:none;">Next Question</button>
     </div>
     <script src="script.js"></script>
