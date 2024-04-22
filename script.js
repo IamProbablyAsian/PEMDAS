@@ -1,44 +1,42 @@
-body, html {
-    height: 100%;
-    margin: 0;
-    font-family: 'Courier New', monospace;
-    background: #000 url('space_background.jpg') no-repeat center center fixed;
-    background-size: cover;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+let score = 0; // Initialize score
+
+function generateExpression() {
+    const ops = ['+', '-', '*', '/'];
+    const nums = [1, 2, 3].map(() => Math.floor(Math.random() * 10) + 1);
+    const chosenOps = [0, 1].map(() => ops[Math.floor(Math.random() * ops.length)]);
+    const useParens = Math.random() > 0.5; // 50% chance to include parentheses
+    let expression = `${nums[0]} ${chosenOps[0]} ${nums[1]} ${chosenOps[1]} ${nums[2]}`;
+    if (useParens) {
+        expression = `(${expression}) ${chosenOps[1]} ${Math.floor(Math.random() * 10) + 1}`;
+    }
+    return expression;
 }
 
-#game-container {
-    width: 90%;
-    max-width: 600px;
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+function generateQuestion() {
+    const expression = generateExpression();
+    document.getElementById('question').innerText = 'Solve the expression: ' + expression;
+    window.currentExpression = expression;
+    document.getElementById('answer').value = '';
+    document.getElementById('feedback').innerText = '';
+    document.getElementById('next').style.display = 'none';
 }
 
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 5px;
-    border: 1px solid #61dafb;
+function submitAnswer() {
+    const userAnswer = parseFloat(document.getElementById('answer').value);
+    const correctAnswer = eval(window.currentExpression);
+    if (Math.abs(userAnswer - correctAnswer) < 0.0001) {
+        document.getElementById('feedback').innerText = 'Correct! Path cleared.';
+        score++; // Increment score for correct answer
+    } else {
+        document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}. ${generateSolution(window.currentExpression)}`;
+    }
+    document.getElementById('score').innerText = `Score: ${score}`; // Update score display
+    document.getElementById('next').style.display = 'inline';
 }
 
-button {
-    padding: 10px 20px;
-    margin-top: 10px;
-    cursor: pointer;
-    background-color: #61dafb;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+function generateSolution(expression) {
+    // Placeholder for a future feature to provide step-by-step solutions.
+    return 'Step-by-step solution not yet implemented.';
 }
 
-#scoreboard {
-    margin-bottom: 20px;
-}
+window.onload = generateQuestion;
