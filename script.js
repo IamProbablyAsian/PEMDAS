@@ -43,9 +43,33 @@ function endGame() {
 // Generates a mathematical expression using user-friendly operators for display
 function generateExpression() {
     const ops = ['+', '-', '×', '÷'];
-    const nums = [1, 2, 3].map(() => Math.floor(Math.random() * 10) + 1);
-    const chosenOps = [0, 1].map(() => ops[Math.floor(Math.random() * ops.length)]);
-    return `${nums[0]} ${chosenOps[0]} ${nums[1]} ${chosenOps[1]} ${nums[2]}`;
+    const nums = [1, 2, 3, 4].map(() => Math.floor(Math.random() * 10) + 1);  // Four numbers for a more complex expression
+    const chosenOps = [0, 1, 2].map(() => ops[Math.floor(Math.random() * ops.length)]);
+    
+    // Randomly decides where to place parentheses
+    let useParens = Math.floor(Math.random() * 5);  // 0 to 4, more options for different paren placements
+    let expression;
+
+    // Depending on the random number, construct different expressions with parentheses
+    switch (useParens) {
+        case 0: // No parentheses
+            expression = `${nums[0]} ${chosenOps[0]} ${nums[1]} ${chosenOps[1]} ${nums[2]} ${chosenOps[2]} ${nums[3]}`;
+            break;
+        case 1: // Parentheses around the first two numbers
+            expression = `(${nums[0]} ${chosenOps[0]} ${nums[1]}) ${chosenOps[1]} ${nums[2]} ${chosenOps[2]} ${nums[3]}`;
+            break;
+        case 2: // Parentheses around the last two numbers
+            expression = `${nums[0]} ${chosenOps[0]} ${nums[1]} ${chosenOps[1]} (${nums[2]} ${chosenOps[2]} ${nums[3]})`;
+            break;
+        case 3: // Parentheses around the first and last operations
+            expression = `(${nums[0]} ${chosenOps[0]} ${nums[1]}) ${chosenOps[1]} ${nums[2]} ${chosenOps[2]} (${nums[3]})`;
+            break;
+        case 4: // Parentheses in the middle operations
+            expression = `${nums[0]} ${chosenOps[0]} (${nums[1]} ${chosenOps[1]} ${nums[2]}) ${chosenOps[2]} ${nums[3]}`;
+            break;
+    }
+    
+    return expression.replace(/×/g, '*').replace(/÷/g, '/');
 }
 
 // Displays the expression and prepares it for evaluation
