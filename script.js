@@ -1,5 +1,34 @@
 let score = 0; // Initialize score
+let timer; // Timer for game duration
+let gameDuration = 600; // Game duration in seconds (10 minutes)
 
+function startTimer(duration) {
+    timer = duration;
+    let minutes, seconds;
+  
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        document.getElementById('timer').textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            timer = 0;
+            endGame();
+        }
+    }, 1000);
+}
+
+function endGame() {
+    document.getElementById('feedback').textContent = 'Time is up! Your final score is ' + score + '.';
+    document.getElementById('answer').disabled = true; // Disable the answer box
+    document.getElementById('submit').disabled = true; // Disable the submit button
+    document.getElementById('next').style.display = 'none';
+    // Here you can implement any other end-of-game logic, like posting the score to a server
+}
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
     const nums = [1, 2, 3].map(() => Math.floor(Math.random() * 10) + 1);
@@ -44,4 +73,7 @@ function generateSolution(expression) {
 }
 
 
-window.onload = generateQuestion;
+window.onload = function () {
+    generateQuestion();
+    startTimer(gameDuration);
+};
