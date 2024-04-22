@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
     document.getElementById('next').addEventListener('click', generateQuestion);
+    generateQuestion(); // Call this function as soon as the DOM is fully loaded
 });
+
 
 let score = 0; // Initialize score
 let timer; // Timer for game duration
@@ -38,22 +40,31 @@ function endGame() {
 }
 
 function generateExpression() {
-    const ops = ['+', '-', '*', '÷'];
+    const ops = ['+', '-', '*', '/']; // Use standard operators for calculation
     const nums = [1, 2, 3].map(() => Math.floor(Math.random() * 10) + 1);
     const chosenOps = [0, 1].map(() => ops[Math.floor(Math.random() * ops.length)]);
     let expression = `${nums[0]} ${chosenOps[0]} ${nums[1]} ${chosenOps[1]} ${nums[2]}`;
     return expression;
 }
 
+
 function generateQuestion() {
-    console.log("generateQuestion triggered");
+    console.log("Calling generateQuestion"); // Check if function is called
     const expression = generateExpression();
-    document.getElementById('question').innerText = 'Solve the expression: ' + expression.replace('÷', '/').replace('×', '*');
-    window.currentExpression = expression;
+    console.log("Generated Expression: ", expression); // Log the expression to see what is generated
+
+    if(expression) {
+        document.getElementById('question').innerText = 'Solve the expression: ' + expression.replace('÷', '/').replace('×', '*');
+        window.currentExpression = expression;
+    } else {
+        console.error("Failed to generate expression");
+    }
+    
     document.getElementById('answer').value = '';
     document.getElementById('feedback').innerText = '';
     document.getElementById('next').style.display = 'none';
 }
+
 
 function submitAnswer() {
     console.log("submitAnswer triggered");
