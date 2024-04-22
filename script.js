@@ -39,38 +39,35 @@ function endGame() {
 }
 
 function generateExpression() {
-    const ops = ['+', '-', '*', '/']; // Use standard operators for calculation
+    const ops = ['+', '-', '*', '/'];
     const nums = [1, 2, 3].map(() => Math.floor(Math.random() * 10) + 1);
     const chosenOps = [0, 1].map(() => ops[Math.floor(Math.random() * ops.length)]);
     let expression = `${nums[0]} ${chosenOps[0]} ${nums[1]} ${chosenOps[1]} ${nums[2]}`;
     return expression;
 }
 
-function generateQuestion() {
-    console.log("Calling generateQuestion"); // Check if function is called
-    const expression = generateExpression();
-    console.log("Generated Expression: ", expression); // Log the expression to see what is generated
+function displayExpression(expression) {
+    const displayExpr = expression.replace(/\*/g, '×').replace(/\//g, '÷');
+    document.getElementById('question').innerText = 'Solve the expression: ' + displayExpr;
+    window.currentExpression = expression; // Store the calculation version for evaluation
+}
 
-    if(expression) {
-        document.getElementById('question').innerText = 'Solve the expression: ' + expression;
-        window.currentExpression = expression;
-    } else {
-        console.error("Failed to generate expression");
-    }
-    
+function generateQuestion() {
+    const newExpression = generateExpression();
+    displayExpression(newExpression);
     document.getElementById('answer').value = '';
     document.getElementById('feedback').innerText = '';
     document.getElementById('next').style.display = 'none';
 }
 
 function submitAnswer() {
-    console.log("submitAnswer triggered");
     if (!timerStarted) {
         startTimer(gameDuration);
     }
 
     const userAnswer = parseFloat(document.getElementById('answer').value);
-    const correctAnswer = eval(window.currentExpression).toFixed(2);
+    const preparedExpression = window.currentExpression.replace('÷', '/').replace('×', '*');
+    const correctAnswer = eval(preparedExpression).toFixed(2);
 
     if (Math.abs(userAnswer - correctAnswer) < 0.01) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
@@ -78,6 +75,8 @@ function submitAnswer() {
     } else {
         document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
     }
+    
     document.getElementById('score').innerText = `Score: ${score}`;
-    document.getElementById('next').style.display = 'block'; // Change 'none' to 'block'
+    document.getElementById('next').style.display = 'block'; // Make sure this is visible after submitting
 }
+
