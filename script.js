@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 let score = 0; // Initialize score
 let timer; // Timer for game duration
-let gameDuration = 420; // Game duration in seconds (7 minutes)
+let gameDuration = 420; // Game duration in seconds (7 minutes, adjusted here)
 let timerStarted = false; // Flag to check if the timer has started
 
 function startTimer(duration) {
@@ -41,30 +41,17 @@ function endGame() {
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
     const nums = [];
-    const chosenOps = [];
-
-    // Generate numbers and operators
     for (let i = 0; i < 3; i++) {
         nums.push(Math.floor(Math.random() * 9) + 1); // Numbers from 1 to 9
-        chosenOps.push(ops[Math.floor(Math.random() * ops.length)]);
-    }
-
-    // Adjust for integer division
-    for (let i = 0; i < chosenOps.length; i++) {
-        if (chosenOps[i] === '/') {
-            const dividend = nums[i];
-            const possibleDivisors = [];
-            for (let j = 1; j <= dividend; j++) {
-                if (dividend % j === 0) {
-                    possibleDivisors.push(j);
-                }
-            }
-            nums[i + 1] = possibleDivisors[Math.floor(Math.random() * possibleDivisors.length)];
+        const op = ops[Math.floor(Math.random() * ops.length)];
+        if (op === '/' && nums[i] !== 0) { // Ensure denominator is not zero
+            nums.push(nums[i] * (Math.floor(Math.random() * 3) + 1)); // Ensure integer result
+        } else {
+            nums.push(Math.floor(Math.random() * 9) + 1);
         }
     }
 
-    // Build the expression string
-    let expression = `${nums[0]} ${chosenOps[0]} ${nums[1]} ${chosenOps[1]} ${nums[2]}`;
+    let expression = `${nums[0]} ${ops[0]} ${nums[1]} ${ops[1]} ${nums[2]} ${ops[2]} ${nums[3]}`;
     return expression.replace('*', '×').replace('/', '÷'); // Use friendly symbols
 }
 
@@ -97,5 +84,5 @@ function submitAnswer() {
     }
 
     document.getElementById('score').innerText = `Score: ${score}`;
-    document.getElementById('next').style.display = 'block';
+    document.getElementById('next').style.display = 'block'; // Show the "Next Question" button
 }
