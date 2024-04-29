@@ -1,12 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
     document.getElementById('next').addEventListener('click', generateQuestion);
-    generateQuestion(); // Initialize the first question
+    // Set initial timer display and generate the first question
+    document.getElementById('timer').textContent = "07:00";
+    generateQuestion(); 
 });
 
 let score = 0; // Initialize score
 let timer; // Timer for game duration
-let gameDuration = 420; // Game duration in seconds (7 minutes, adjusted here)
+let gameDuration = 420; // Game duration in seconds (7 minutes)
 let timerStarted = false; // Flag to check if the timer has started
 
 function startTimer(duration) {
@@ -40,18 +42,28 @@ function endGame() {
 
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
-    const nums = [];
-    for (let i = 0; i < 3; i++) {
-        nums.push(Math.floor(Math.random() * 9) + 1); // Numbers from 1 to 9
+    const nums = [Math.floor(Math.random() * 9) + 1];
+    let expression = nums[0].toString();
+
+    for (let i = 1; i < 4; i++) {
         const op = ops[Math.floor(Math.random() * ops.length)];
-        if (op === '/' && nums[i] !== 0) { // Ensure denominator is not zero
-            nums.push(nums[i] * (Math.floor(Math.random() * 3) + 1)); // Ensure integer result
+        let nextNum = Math.floor(Math.random() * 9) + 1;
+        
+        // If the operation is division, adjust nextNum to be a divisor of the last number
+        if (op === '/' && nextNum !== 0) { 
+            const multiples = [];
+            for (let j = 1; j <= 10; j++) {
+                multiples.push(nextNum * j);
+            }
+            expression += ' / ' + nextNum;
+            nums.push(nextNum);
+            nextNum = multiples[Math.floor(Math.random() * multiples.length)];
         } else {
-            nums.push(Math.floor(Math.random() * 9) + 1);
+            expression += ' ' + op + ' ' + nextNum;
+            nums.push(nextNum);
         }
     }
-
-    let expression = `${nums[0]} ${ops[0]} ${nums[1]} ${ops[1]} ${nums[2]} ${ops[2]} ${nums[3]}`;
+    
     return expression.replace('*', '×').replace('/', '÷'); // Use friendly symbols
 }
 
@@ -73,10 +85,10 @@ function submitAnswer() {
         startTimer(gameDuration);
     }
 
-    const userAnswer = parseFloat(document.getElementById('answer').value);
-    const correctAnswer = eval(window.currentExpression).toFixed(2);
+    const userAnswer = parseInt(document.getElementById('answer').value, 10);
+    const correctAnswer = Math.round(eval(window.currentExpression.replace('÷', '/').replace('×', '*')));
 
-    if (Math.abs(userAnswer - correctAnswer) < 0.01) {
+    if (userAnswer === correctAnswer) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
         score++;
     } else {
