@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
     document.getElementById('next').addEventListener('click', generateQuestion);
-    // Set initial timer display and generate the first question
+    // Set initial timer display to 07:00 and generate the first question
     document.getElementById('timer').textContent = "07:00";
     generateQuestion(); 
 });
@@ -42,39 +42,28 @@ function endGame() {
 
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
+    let expression = '';
     const nums = [Math.floor(Math.random() * 9) + 1];
-    let expression = nums[0].toString();
 
-    for (let i = 1; i < 4; i++) {
+    for (let i = 0; i < 3; i++) {
         const op = ops[Math.floor(Math.random() * ops.length)];
         let nextNum = Math.floor(Math.random() * 9) + 1;
-        
-        // If the operation is division, adjust nextNum to be a divisor of the last number
-        if (op === '/' && nextNum !== 0) { 
-            const multiples = [];
-            for (let j = 1; j <= 10; j++) {
-                multiples.push(nextNum * j);
-            }
-            expression += ' / ' + nextNum;
-            nums.push(nextNum);
-            nextNum = multiples[Math.floor(Math.random() * multiples.length)];
-        } else {
-            expression += ' ' + op + ' ' + nextNum;
-            nums.push(nextNum);
-        }
+        nums.push(nextNum);
+        expression += ' ' + op + ' ' + nextNum;
     }
-    
-    return expression.replace('*', '×').replace('/', '÷'); // Use friendly symbols
+
+    return nums[0] + expression;
 }
 
 function displayExpression(expression) {
-    document.getElementById('question').innerText = 'Solve the expression: ' + expression;
-    window.currentExpression = expression.replace('×', '*').replace('÷', '/');
+    const displayExpression = expression.replace(/\*/g, '×').replace(/\//g, '÷');
+    document.getElementById('question').innerText = 'Solve the expression: ' + displayExpression;
+    window.currentExpression = expression; // Store the original expression for evaluation
 }
 
 function generateQuestion() {
     const newExpression = generateExpression();
-    displayExpression(newExpression);
+    displayExpression(newExpression); // Display with friendly symbols
     document.getElementById('answer').value = '';
     document.getElementById('feedback').innerText = '';
     document.getElementById('next').style.display = 'none';
@@ -85,8 +74,8 @@ function submitAnswer() {
         startTimer(gameDuration);
     }
 
-    const userAnswer = parseInt(document.getElementById('answer').value, 10);
-    const correctAnswer = Math.round(eval(window.currentExpression.replace('÷', '/').replace('×', '*')));
+    const userAnswer = parseFloat(document.getElementById('answer').value);
+    const correctAnswer = Math.round(eval(window.currentExpression.replace('×', '*').replace('÷', '/')));
 
     if (userAnswer === correctAnswer) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
