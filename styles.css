@@ -1,10 +1,12 @@
 body {
-    background-image: url('https://as1.ftcdn.net/v2/jpg/01/85/42/54/1000_F_185425447_CbQ4IQoRCD9duV0wfEJpIlutfrAbQakT.jpg'); /* Replace with your actual image URL */
+    background-image: url('https://as1.ftcdn.net/v2/jpg/01/85/42/54/1000_F_185425447_CbQ4IQoRCD9duV0wfEJpIlutfrAbQakT.jpg');
     background-size: cover;
     background-position: center;
     font-family: 'Orbitron', sans-serif;
     color: white;
     text-align: center;
+    margin: 0; /* Ensure no default margin is interfering */
+    height: 100vh; /* Makes sure the body takes at least the height of the viewport */
 }
 
 #game-container {
