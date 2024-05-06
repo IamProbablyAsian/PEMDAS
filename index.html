@@ -8,16 +8,20 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="game-container">
+    <main id="game-container">
         <h1>PEMDAS Space Quest</h1>
-        <div id="timer">07:00</div>
-        <p id="question">Solve the expression: </p>
-        <input type="text" id="answer"/>
-        <button id="submit">Submit</button>
-        <p id="feedback"></p>
-        <button id="next">Next Question</button>
-        <p>Score: <span id="score">0</span></p>
-    </div>
+        <section aria-label="Game timer and score">
+            <div id="timer">07:00</div>
+            <p>Score: <span id="score">0</span></p>
+        </section>
+        <section aria-label="Math problem">
+            <p id="question">Solve the expression: </p>
+            <input type="text" id="answer" aria-label="Your answer"/>
+            <button id="submit" aria-label="Submit your answer">Submit</button>
+            <p id="feedback"></p>
+            <button id="next" aria-label="Next question">Next Question</button>
+        </section>
+    </main>
     <script src="script.js"></script>
 </body>
 </html>
