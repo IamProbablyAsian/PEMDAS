@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
     document.getElementById('next').addEventListener('click', generateQuestion);
-    document.getElementById('timer').textContent = "07:00"; // Set initial timer display
+    document.getElementById('timer').textContent = "07:00"; // Initialize the timer display
     generateQuestion(); // Initialize the first question
 });
 
@@ -34,25 +34,30 @@ function endGame() {
 }
 
 function generateExpression() {
-    let nums = [getRandomNumber()];
     const ops = ['+', '-', '*', '/'];
-    let expression = nums[0].toString();
-
-    for (let i = 0; i < 3; i++) {
-        const op = ops[Math.floor(Math.random() * ops.length)];
-        let nextNum = getRandomNumber();
-        if (op === '/') {
-            nextNum = nums[i] * (Math.floor(Math.random() * 3) + 1); // Ensure divisibility
-        }
-        nums.push(nextNum);
-        expression += ` ${op} ${nextNum}`;
+    let nums = [];
+    for (let i = 0; i < 4; i++) { // Generate four numbers
+        nums.push(Math.floor(Math.random() * 9) + 1);
     }
+    let expression = '';
+    nums.forEach((num, index) => {
+        if (index > 0) {
+            let op = ops[Math.floor(Math.random() * ops.length)];
+            expression += ` ${op} `;
+        }
+        expression += num;
+    });
 
-    return expression;
+    return addParentheses(expression);
 }
 
-function getRandomNumber() {
-    return Math.floor(Math.random() * 9) + 1; // Numbers from 1 to 9
+function addParentheses(expr) {
+    const parts = expr.split(' ');
+    if (Math.random() > 0.5 && parts.length > 3) { // Only add parentheses if there are enough parts
+        let index = 1; // Start at the first operator
+        parts.splice(index, 2, '(' + parts[index] + parts[index + 1] + parts[index + 2] + ')');
+    }
+    return parts.join(' ');
 }
 
 function displayExpression(expression) {
@@ -69,16 +74,13 @@ function generateQuestion() {
 }
 
 function submitAnswer() {
-    console.log("Submit button clicked."); // Debugging statement
     if (!timerStarted) {
         startTimer(gameDuration);
     }
-    const userAnswer = parseFloat(document.getElementById('answer').value);
+    const userAnswer = parseInt(document.getElementById('answer').value, 10);
     const correctAnswer = eval(window.currentExpression.replace('×', '*').replace('÷', '/'));
 
-    console.log(`User Answer: ${userAnswer}, Correct Answer: ${correctAnswer}`); // Debugging statement
-
-    if (Math.abs(userAnswer - correctAnswer) < 0.01) {
+    if (userAnswer === correctAnswer) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
         score++;
     } else {
