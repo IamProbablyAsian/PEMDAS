@@ -1,22 +1,30 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
-    generateQuestion(); // Ensures the first question is displayed on page load
-    document.getElementById('next').style.display = 'none'; // Hide next button initially
+    document.getElementById('next').addEventListener('click', generateQuestion);
+    // Set initial timer display to 07:00 and generate the first question
+    document.getElementById('timer').textContent = "07:00";
+    generateQuestion(); 
 });
 
-let score = 0;
-let timer;
-let gameDuration = 420; // 7 minutes
-let timerStarted = false;
+let score = 0; // Initialize score
+let timer; // Timer for game duration
+let gameDuration = 420; // Game duration in seconds (7 minutes)
+let timerStarted = false; // Flag to check if the timer has started
 
 function startTimer(duration) {
     if (!timerStarted) {
         timerStarted = true;
         timer = duration;
+        let minutes, seconds;
         let timerInterval = setInterval(function() {
-            let minutes = parseInt(timer / 60, 10);
-            let seconds = parseInt(timer % 60, 10);
-            document.getElementById('timer').textContent = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            document.getElementById('timer').textContent = minutes + ":" + seconds;
+
             if (--timer < 0) {
                 clearInterval(timerInterval);
                 endGame();
@@ -29,58 +37,53 @@ function endGame() {
     document.getElementById('feedback').textContent = 'Time is up! Your final score is ' + score + '.';
     document.getElementById('answer').disabled = true;
     document.getElementById('submit').disabled = true;
-    document.getElementById('next').disabled = true;
+    document.getElementById('next').style.display = 'none';
 }
 
 function generateExpression() {
-    const ops = ['+', '-', '*', '/']; // Operations array
-    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber()]; // Array of numbers
-    let expression = nums[0].toString();
+    const ops = ['+', '-', '*', '/'];
+    let expression = '';
+    const nums = [Math.floor(Math.random() * 9) + 1];
 
-    for (let i = 1; i < nums.length; i++) {
-        let op = ops[Math.floor(Math.random() * ops.length)];
-        if (op === '/') {
-            // Adjust divisor to ensure integer division
-            let newDivisor = expression.endsWith(')') ? eval(expression) : nums[i - 1];
-            nums[i] = newDivisor * getRandomNumber();
-            expression = `(${expression} / ${nums[i]})`;
-        } else {
-            expression += ` ${op} ${nums[i]}`;
-        }
+    for (let i = 0; i < 3; i++) {
+        const op = ops[Math.floor(Math.random() * ops.length)];
+        let nextNum = Math.floor(Math.random() * 9) + 1;
+        nums.push(nextNum);
+        expression += ' ' + op + ' ' + nextNum;
     }
 
-    return expression;
-}
-
-function getRandomNumber() {
-    return Math.floor(Math.random() * 9) + 1; // Random number from 1 to 9
+    return nums[0] + expression;
 }
 
 function displayExpression(expression) {
-    document.getElementById('question').innerText = 'Solve the expression: ' + expression;
-    window.currentExpression = expression;
+    const displayExpression = expression.replace(/\*/g, '×').replace(/\//g, '÷');
+    document.getElementById('question').innerText = 'Solve the expression: ' + displayExpression;
+    window.currentExpression = expression; // Store the original expression for evaluation
 }
 
 function generateQuestion() {
-    const expression = generateExpression();
-    displayExpression(expression); // Display with correct math symbols
+    const newExpression = generateExpression();
+    displayExpression(newExpression); // Display with friendly symbols
     document.getElementById('answer').value = '';
     document.getElementById('feedback').innerText = '';
+    document.getElementById('next').style.display = 'none';
 }
 
 function submitAnswer() {
     if (!timerStarted) {
         startTimer(gameDuration);
     }
-    const userAnswer = parseInt(document.getElementById('answer').value, 10);
-    const correctAnswer = eval(window.currentExpression);
+
+    const userAnswer = parseFloat(document.getElementById('answer').value);
+    const correctAnswer = Math.round(eval(window.currentExpression.replace('×', '*').replace('÷', '/')));
 
     if (userAnswer === correctAnswer) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
         score++;
-        document.getElementById('next').style.display = 'block'; // Show next button after first correct answer
     } else {
         document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
     }
+
     document.getElementById('score').innerText = `Score: ${score}`;
+    document.getElementById('next').style.display = 'block'; // Show the "Next Question" button
 }
