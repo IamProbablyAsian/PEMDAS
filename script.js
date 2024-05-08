@@ -1,30 +1,25 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
     document.getElementById('next').addEventListener('click', generateQuestion);
-    // Set initial timer display to 07:00 and generate the first question
     document.getElementById('timer').textContent = "07:00";
-    generateQuestion(); 
+    generateQuestion();
 });
 
-let score = 0; // Initialize score
-let timer; // Timer for game duration
+let score = 0;
+let timer;
 let gameDuration = 420; // Game duration in seconds (7 minutes)
-let timerStarted = false; // Flag to check if the timer has started
+let timerStarted = false;
 
 function startTimer(duration) {
     if (!timerStarted) {
         timerStarted = true;
         timer = duration;
-        let minutes, seconds;
         let timerInterval = setInterval(function() {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
-
+            let minutes = parseInt(timer / 60, 10);
+            let seconds = parseInt(timer % 60, 10);
             minutes = minutes < 10 ? "0" + minutes : minutes;
             seconds = seconds < 10 ? "0" + seconds : seconds;
-
             document.getElementById('timer').textContent = minutes + ":" + seconds;
-
             if (--timer < 0) {
                 clearInterval(timerInterval);
                 endGame();
@@ -42,28 +37,60 @@ function endGame() {
 
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
-    let expression = '';
-    const nums = [Math.floor(Math.random() * 9) + 1];
+    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber(), getRandomNumber()];
+    let expression = nums[0].toString();
+    let usedParens = false;
 
-    for (let i = 0; i < 3; i++) {
-        const op = ops[Math.floor(Math.random() * ops.length)];
-        let nextNum = Math.floor(Math.random() * 9) + 1;
-        nums.push(nextNum);
-        expression += ' ' + op + ' ' + nextNum;
+    for (let i = 1; i < nums.length; i++) {
+        let op = ops[Math.floor(Math.random() * ops.length)];
+        if (!usedParens && Math.random() > 0.5) {
+            expression = '(' + expression;
+            usedParens = true;
+        }
+
+        if (op === '/') {
+            let currentResult = eval(expression);
+            nums[i] = getRandomIntDivisor(currentResult);
+            expression += ` ${op} ${nums[i]}`;
+            if (usedParens) {
+                expression += ')';
+                usedParens = false;
+            }
+        } else {
+            expression += ` ${op} ${nums[i]}`;
+        }
     }
 
-    return nums[0] + expression;
+    if (usedParens) {
+        expression += ')';
+    }
+
+    return expression;
+}
+
+function getRandomNumber() {
+    return Math.floor(Math.random() * 9) + 1;
+}
+
+function getRandomIntDivisor(number) {
+    let divisors = [];
+    for (let i = 1; i <= number; i++) {
+        if (number % i === 0) {
+            divisors.push(i);
+        }
+    }
+    return divisors[Math.floor(Math.random() * divisors.length)];
 }
 
 function displayExpression(expression) {
     const displayExpression = expression.replace(/\*/g, '×').replace(/\//g, '÷');
     document.getElementById('question').innerText = 'Solve the expression: ' + displayExpression;
-    window.currentExpression = expression; // Store the original expression for evaluation
+    window.currentExpression = expression;
 }
 
 function generateQuestion() {
     const newExpression = generateExpression();
-    displayExpression(newExpression); // Display with friendly symbols
+    displayExpression(newExpression);
     document.getElementById('answer').value = '';
     document.getElementById('feedback').innerText = '';
     document.getElementById('next').style.display = 'none';
@@ -85,5 +112,5 @@ function submitAnswer() {
     }
 
     document.getElementById('score').innerText = `Score: ${score}`;
-    document.getElementById('next').style.display = 'block'; // Show the "Next Question" button
+    document.getElementById('next').style.display = 'block';
 }
