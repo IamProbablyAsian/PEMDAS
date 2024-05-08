@@ -37,49 +37,13 @@ function endGame() {
 
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
-    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber(), getRandomNumber()];
-    let expression = nums[0].toString();
-    let usedParens = false;
-
-    for (let i = 1; i < nums.length; i++) {
-        let op = ops[Math.floor(Math.random() * ops.length)];
-        if (!usedParens && Math.random() > 0.5) {
-            expression = '(' + expression;
-            usedParens = true;
-        }
-
-        if (op === '/') {
-            let currentResult = eval(expression);
-            nums[i] = getRandomIntDivisor(currentResult);
-            expression += ` ${op} ${nums[i]}`;
-            if (usedParens) {
-                expression += ')';
-                usedParens = false;
-            }
-        } else {
-            expression += ` ${op} ${nums[i]}`;
-        }
-    }
-
-    if (usedParens) {
-        expression += ')';
-    }
-
+    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber()];
+    let expression = `(${nums[0]} ${ops[Math.floor(Math.random() * ops.length)]} ${nums[1]}) ${ops[Math.floor(Math.random() * ops.length)]} ${nums[2]}`;
     return expression;
 }
 
 function getRandomNumber() {
-    return Math.floor(Math.random() * 9) + 1;
-}
-
-function getRandomIntDivisor(number) {
-    let divisors = [];
-    for (let i = 1; i <= number; i++) {
-        if (number % i === 0) {
-            divisors.push(i);
-        }
-    }
-    return divisors[Math.floor(Math.random() * divisors.length)];
+    return Math.floor(Math.random() * 10) + 1; // Random number from 1 to 10
 }
 
 function displayExpression(expression) {
@@ -101,8 +65,8 @@ function submitAnswer() {
         startTimer(gameDuration);
     }
 
-    const userAnswer = parseFloat(document.getElementById('answer').value);
-    const correctAnswer = Math.round(eval(window.currentExpression.replace('×', '*').replace('÷', '/')));
+    const userAnswer = parseInt(document.getElementById('answer').value, 10);
+    const correctAnswer = Math.floor(eval(window.currentExpression.replace('×', '*').replace('÷', '/')));
 
     if (userAnswer === correctAnswer) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
