@@ -41,9 +41,9 @@ function generateExpression() {
         let op = ops[Math.floor(Math.random() * ops.length)];
         if (op === '/') {
             nums[i] = expression.endsWith(')') ? eval(expression) * getRandomNumber() : nums[i - 1] * getRandomNumber();
-            expression = `(${expression} ${op} ${nums[i]})`;
+            expression = `(${expression} ÷ ${nums[i]})`;
         } else {
-            expression += ` ${op} ${nums[i]}`;
+            expression += ` ${op.replace('*', '×')} ${nums[i]}`;
         }
     }
 
@@ -56,12 +56,12 @@ function getRandomNumber() {
 
 function displayExpression(expression) {
     document.getElementById('question').innerText = 'Solve the expression: ' + expression;
-    window.currentExpression = expression;
+    window.currentExpression = expression.replace('×', '*').replace('÷', '/');
 }
 
 function generateQuestion() {
     const expression = generateExpression();
-    displayExpression(expression.replace('*', '×').replace('/', '÷')); // Display with correct math symbols
+    displayExpression(expression); // Display with correct math symbols
     document.getElementById('answer').value = '';
     document.getElementById('feedback').innerText = '';
 }
