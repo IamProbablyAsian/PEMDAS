@@ -56,9 +56,12 @@ function getRandomNumber() {
 }
 
 function displayExpression(expression) {
-    const formattedExpression = expression.replace(/\*/g, '×');
-    document.getElementById('question').innerText = 'Solve the expression: ' + formattedExpression;
-    window.currentExpression = expression;
+    // Regular expression to find exponentiation patterns and replace them with HTML superscript tags
+    const formattedExpression = expression.replace(/(\d+)\s*\*\*\s*(\d+)/g, (match, base, exp) => `${base}<sup>${exp}</sup>`)
+                                          .replace(/\*/g, '×')
+                                          .replace(/\//g, '÷');
+    document.getElementById('question').innerHTML = 'Solve the expression: ' + formattedExpression; // Use innerHTML to render HTML
+    window.currentExpression = expression; // Store the original expression for calculation
 }
 
 function generateQuestion() {
@@ -76,8 +79,10 @@ function submitAnswer() {
 
     const userAnswer = parseFloat(document.getElementById('answer').value);
     try {
-        const expressionResult = math.evaluate(window.currentExpression.replace('×', '*'));
-        const correctAnswer = Math.floor(expressionResult * 100) / 100; // Rounded down to the nearest hundredth
+        // Correctly replacing formatted superscript back to a calculable format before evaluation
+        const expressionForCalculation = window.currentExpression.replace(/(\d+)\s*\*\*\s*(\d+)/g, "$1**$2");
+        const expressionResult = math.evaluate(expressionForCalculation.replace('×', '*').replace('÷', '/'));
+        const correctAnswer = Math.floor(expressionResult * 100) / 100; // Round down to the nearest hundredth
 
         if (Math.abs(userAnswer - correctAnswer) < 0.01) {
             document.getElementById('feedback').innerText = 'Correct! Path cleared.';
