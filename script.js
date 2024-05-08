@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
     document.getElementById('next').addEventListener('click', generateQuestion);
     document.getElementById('explain').addEventListener('click', showExplanation);
-    document.getElementById('timer').textContent = "07:00";
+    document.getElementById('timer').textContent = "07:00"; // Initialize the timer display
     generateQuestion();
 });
 
@@ -38,11 +38,17 @@ function endGame() {
 
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
-    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber(), getRandomNumber()];
+    let nums = [];
+    for (let i = 0; i < 4; i++) {
+        nums.push(getRandomNumber());
+    }
     let expression = nums[0].toString();
 
     for (let i = 1; i < nums.length; i++) {
-        const op = ops[Math.floor(Math.random() * ops.length)];
+        let op = ops[Math.floor(Math.random() * ops.length)];
+        if (op === '/' && nums[i] !== 0) {  // Adjust division to ensure integer results
+            nums[i] = nums[i - 1] * nums[i];
+        }
         expression += ` ${op} ${nums[i]}`;
     }
 
@@ -103,6 +109,5 @@ function showExplanation() {
 }
 
 function generateExplanation(expression) {
-    // Simplified explanation for illustration
     return `Evaluate the expression step-by-step following PEMDAS/BODMAS rules, considering any parentheses to determine the order of operations.`;
 }
