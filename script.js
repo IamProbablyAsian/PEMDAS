@@ -60,13 +60,14 @@ function getRandomNumber() {
 }
 
 function displayExpression(expression) {
-    // This function converts expression operations into HTML friendly format
+    // Enhance formatting to ensure proper HTML superscript rendering
     const formattedExpression = expression
         .replace(/\*/g, '×')
         .replace(/\//g, '÷')
-        .replace(/\^/g, '<sup>') + '</sup>'; // Adding superscript tags around exponent
+        // Correctly format exponentiation by wrapping exponents in <sup> tags
+        .replace(/(\d+)\^(\d+)/g, "$1<sup>$2</sup>");
 
-    document.getElementById('question').innerHTML = 'Solve the expression: ' + formattedExpression; // Use innerHTML to interpret HTML
+    document.getElementById('question').innerHTML = 'Solve the expression: ' + formattedExpression;
     window.currentExpression = expression; // Store the original expression for calculation
 }
 
