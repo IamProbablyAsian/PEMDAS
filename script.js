@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
     document.getElementById('next').addEventListener('click', generateQuestion);
     document.getElementById('timer').textContent = "07:00";
-    generateQuestion();
+    generateQuestion(); // Ensures the first question is displayed on page load
 });
 
 let score = 0;
