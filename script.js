@@ -47,7 +47,7 @@ function generateExpression() {
     for (let i = 1; i < nums.length; i++) {
         let op = ops[Math.floor(Math.random() * ops.length)];
         if (op === '/' && nums[i] !== 0) {  // Adjust division to ensure integer results
-            nums[i] = nums[i - 1] * nums[i];
+            nums[i] = nums[i - 1] * (Math.floor(Math.random() * 5) + 1); // Ensure integer division
         }
         expression += ` ${op} ${nums[i]}`;
     }
