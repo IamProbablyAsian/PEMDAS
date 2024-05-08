@@ -1,30 +1,25 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
     document.getElementById('next').addEventListener('click', generateQuestion);
-    // Set initial timer display to 07:00 and generate the first question
-    document.getElementById('timer').textContent = "07:00";
-    generateQuestion(); 
+    document.getElementById('explain').addEventListener('click', showExplanation);
+    document.getElementById('timer').textContent = "07:00"; // Initialize the timer display
+    generateQuestion();
 });
 
-let score = 0; // Initialize score
-let timer; // Timer for game duration
-let gameDuration = 420; // Game duration in seconds (7 minutes)
-let timerStarted = false; // Flag to check if the timer has started
+let score = 0;
+let timer;
+let gameDuration = 420; // 7 minutes
+let timerStarted = false;
+let lastExplanation = '';
 
 function startTimer(duration) {
     if (!timerStarted) {
         timerStarted = true;
         timer = duration;
-        let minutes, seconds;
         let timerInterval = setInterval(function() {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
-
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-
-            document.getElementById('timer').textContent = minutes + ":" + seconds;
-
+            let minutes = parseInt(timer / 60, 10);
+            let seconds = parseInt(timer % 60, 10);
+            document.getElementById('timer').textContent = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
             if (--timer < 0) {
                 clearInterval(timerInterval);
                 endGame();
@@ -38,52 +33,81 @@ function endGame() {
     document.getElementById('answer').disabled = true;
     document.getElementById('submit').disabled = true;
     document.getElementById('next').style.display = 'none';
+    document.getElementById('explain').style.display = 'none';
 }
 
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
-    let expression = '';
-    const nums = [Math.floor(Math.random() * 9) + 1];
+    let nums = [];
+    for (let i = 0; i < 4; i++) {
+        nums.push(getRandomNumber());
+    }
+    let expression = nums[0].toString();
 
-    for (let i = 0; i < 3; i++) {
-        const op = ops[Math.floor(Math.random() * ops.length)];
-        let nextNum = Math.floor(Math.random() * 9) + 1;
-        nums.push(nextNum);
-        expression += ' ' + op + ' ' + nextNum;
+    for (let i = 1; i < nums.length; i++) {
+        let op = ops[Math.floor(Math.random() * ops.length)];
+        if (op === '/' && nums[i] !== 0) {  // Adjust division to ensure integer results
+            nums[i] = nums[i - 1] * (Math.floor(Math.random() * 5) + 1); // Ensure integer division
+        }
+        expression += ` ${op} ${nums[i]}`;
     }
 
-    return nums[0] + expression;
+    return addRandomParentheses(expression);
+}
+
+function getRandomNumber() {
+    return Math.floor(Math.random() * 9) + 1; // Numbers from 1 to 9
+}
+
+function addRandomParentheses(expr) {
+    const parts = expr.split(' ');
+    if (Math.random() > 0.5 && parts.length > 5) {
+        let index = Math.floor(Math.random() * (parts.length - 4) / 2) * 2 + 1;
+        parts.splice(index, 0, '(');
+        parts.splice(index + 4, 0, ')');
+    }
+    return parts.join(' ');
 }
 
 function displayExpression(expression) {
-    const displayExpression = expression.replace(/\*/g, '×').replace(/\//g, '÷');
-    document.getElementById('question').innerText = 'Solve the expression: ' + displayExpression;
-    window.currentExpression = expression; // Store the original expression for evaluation
+    document.getElementById('question').innerText = 'Solve the expression: ' + expression.replace('*', '×').replace('/', '÷');
+    window.currentExpression = expression;
 }
 
 function generateQuestion() {
-    const newExpression = generateExpression();
-    displayExpression(newExpression); // Display with friendly symbols
+    const expression = generateExpression();
+    displayExpression(expression);
     document.getElementById('answer').value = '';
     document.getElementById('feedback').innerText = '';
     document.getElementById('next').style.display = 'none';
+    document.getElementById('explain').style.display = 'none';
 }
 
 function submitAnswer() {
     if (!timerStarted) {
         startTimer(gameDuration);
     }
-
-    const userAnswer = parseFloat(document.getElementById('answer').value);
-    const correctAnswer = Math.round(eval(window.currentExpression.replace('×', '*').replace('÷', '/')));
+    const userAnswer = parseInt(document.getElementById('answer').value, 10);
+    const correctAnswer = eval(window.currentExpression.replace('×', '*').replace('÷', '/'));
 
     if (userAnswer === correctAnswer) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
         score++;
+        document.getElementById('explain').style.display = 'none';
     } else {
+        lastExplanation = generateExplanation(window.currentExpression.replace('×', '*').replace('÷', '/'));
         document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
+        document.getElementById('explain').style.display = 'block';
     }
-
     document.getElementById('score').innerText = `Score: ${score}`;
-    document.getElementById('next').style.display = 'block'; // Show the "Next Question" button
+    document.getElementById('next').style.display = 'block';
+}
+
+function showExplanation() {
+    document.getElementById('feedback').innerText += ` Here's how to solve it: ${lastExplanation}`;
+    document.getElementById('explain').style.display = 'none'; // Hide after showing
+}
+
+function generateExplanation(expression) {
+    return `Evaluate the expression step-by-step following PEMDAS/BODMAS rules, considering any parentheses to determine the order of operations.`;
 }
