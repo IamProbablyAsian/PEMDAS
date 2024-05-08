@@ -36,33 +36,35 @@ function endGame() {
 }
 
 function generateExpression() {
-    const ops = ['+', '-', '*', '**']; // Simplified operations list
+    const ops = ['+', '-', '*', '/']; // Include all basic operations
     let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber()];
-    
-    // Predefined simpler expressions
+
+    // Ensure multiplication and division involve easy, whole-number results
+    let multiplication = `${nums[0]} * ${nums[1]}`;
+    let division = `${nums[0] * nums[1]} / ${nums[1]}`; // Ensures division is clean
+
+    // Creating varied but controlled expressions
     let expressions = [
-        `${nums[0]} + ${nums[1]} * ${nums[2]}`,
-        `${nums[0]} - ${nums[1]} + ${nums[2]}`,
-        `${nums[0]} ** 2 - ${nums[1]}`,
-        `${nums[0]} * ${nums[1]} - ${nums[2]}`
+        `${nums[0]} + ${multiplication} - ${nums[2]}`,  // Addition, multiplication, subtraction
+        `${division} - ${nums[2]} + ${nums[0]}`,  // Division, subtraction, addition
+        `${nums[0]} - ${division} + ${nums[2]}`,  // Subtraction, division, addition
+        `${multiplication} + ${nums[0]} - ${nums[2]}` // Multiplication, addition, subtraction
     ];
 
-    // Randomly select one of the expressions
+    // Randomly select one of the simpler expressions
     return expressions[Math.floor(Math.random() * expressions.length)];
 }
 
 function getRandomNumber() {
-    return Math.floor(Math.random() * 20) + 1; // Random number from 1 to 20 for varied complexity
+    return Math.floor(Math.random() * 9) + 2; // Numbers from 2 to 10 to avoid division by 1
 }
 
 function displayExpression(expression) {
-    // Regular expression to find exponentiation patterns and replace them with HTML superscript tags
-    const formattedExpression = expression.replace(/(\d+)\s*\*\*\s*(\d+)/g, (match, base, exp) => `${base}<sup>${exp}</sup>`)
-                                          .replace(/\*/g, '×')
-                                          .replace(/\//g, '÷');
-    document.getElementById('question').innerHTML = 'Solve the expression: ' + formattedExpression; // Use innerHTML to render HTML
+    const formattedExpression = expression.replace(/\*/g, '×').replace(/\//g, '÷');
+    document.getElementById('question').innerText = 'Solve the expression: ' + formattedExpression;
     window.currentExpression = expression; // Store the original expression for calculation
 }
+
 
 function generateQuestion() {
     const newExpression = generateExpression();
