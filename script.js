@@ -36,14 +36,20 @@ function endGame() {
 }
 
 function generateExpression() {
-    const ops = ['+', '-', '*', '/'];
-    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber()];
-    let expression = `(${nums[0]} ${ops[Math.floor(Math.random() * ops.length)]} ${nums[1]}) ${ops[Math.floor(Math.random() * ops.length)]} ${nums[2]}`;
+    // Define operations and higher complexity by including exponents
+    const ops = ['+', '-', '*', '/', '**'];
+    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber(), getRandomNumber()];
+    // Creating more complex expressions including parentheses and exponents
+    let expression = `${nums[0]} ${ops[Math.floor(Math.random() * (ops.length - 1))]} ( ${nums[1]} ${ops[Math.floor(Math.random() * (ops.length - 1))]} ${nums[2]} ) ${ops[Math.floor(Math.random() * (ops.length - 1))]} ${nums[3]}`;
+    // Introduce an exponent in one of the terms randomly
+    if (Math.random() > 0.5) {  // 50% chance to add an exponent to the second term
+        expression = `${nums[0]} ${ops[Math.floor(Math.random() * (ops.length - 1))]} ( ${nums[1]} ** ${getRandomSmallNumber()} ) ${ops[Math.floor(Math.random() * (ops.length - 1))]} ${nums[3]}`;
+    }
     return expression;
 }
 
-function getRandomNumber() {
-    return Math.floor(Math.random() * 10) + 1; // Random number from 1 to 10
+function getRandomSmallNumber() {
+    return Math.floor(Math.random() * 3) + 2; // Random small number from 2 to 4 for exponents
 }
 
 function displayExpression(expression) {
