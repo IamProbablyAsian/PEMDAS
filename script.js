@@ -35,33 +35,61 @@ function endGame() {
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
     let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber()];
-    let expression = '';
+    let expressionParts = [];
     let formattedExpression = '';
 
     nums.forEach((num, index) => {
-        if (index > 0) {
-            let op = ops[Math.floor(Math.random() * ops.length)];
-            expression += ` ${op} ${num}`;
-            if (op === '/') {
-                // Ensure division results in an integer
-                num = num * getRandomNumber();
-                formattedExpression += ` ÷ ${num}`;
-            } else {
-                formattedExpression += ` ${op.replace('*', '×').replace('/', '÷')} ${num}`;
-            }
+        if (index === 0) {
+            expressionParts.push(num);
         } else {
-            expression += num;
-            formattedExpression += num;
+            let op = ops[Math.floor(Math.random() * ops.length)];
+            if (op === '/') {
+                // Adjust for integer division
+                num = expressionParts[expressionParts.length - 1] * getRandomNumber();
+            }
+            expressionParts.push(op);
+            expressionParts.push(num);
         }
     });
 
-    // Optional: Randomly add parentheses for complexity
-    if (Math.random() > 0.5) {
-        expression = `(${expression})`;
-    }
+    // Add parentheses for the first two operations to emphasize PEMDAS
+    formattedExpression = `(${expressionParts[0]} ${expressionParts[1]} ${expressionParts[2]}) ${expressionParts[3]} ${expressionParts[4]}`;
 
-    return { expression, formattedExpression };
+    return {
+        expression: expressionParts.join(' '), // For evaluation
+        formattedExpression: formattedExpression.replace('*', '×').replace('/', '÷') // For display
+    };
 }
 
 function getRandomNumber() {
     return Math.floor(Math.random() * 9) + 1; // Numbers from 1 to 9
+}
+
+function displayExpression(formattedExpression) {
+    document.getElementById('question').innerText = 'Solve the expression: ' + formattedExpression;
+    window.currentExpression = formattedExpression.replace('×', '*').replace('÷', '/');
+}
+
+function generateQuestion() {
+    const { expression, formattedExpression } = generateExpression();
+    displayExpression(formattedExpression);
+    window.currentExpression = expression; // Ensure this matches eval() logic
+    document.getElementById('answer').value = '';
+    document.getElementById('feedback').innerText = '';
+}
+
+function submitAnswer() {
+    if (!timerStarted) {
+        startTimer(gameDuration);
+    }
+    const userAnswer = parseInt(document.getElementById('answer').value, 10);
+    const correctAnswer = eval(window.currentExpression);
+
+    if (userAnswer === correctAnswer) {
+        document.getElementById('feedback').innerText = 'Correct! Path cleared.';
+        score++;
+    } else {
+        document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
+    }
+    document.getElementById('score').innerText = `Score: ${score}`;
+}
