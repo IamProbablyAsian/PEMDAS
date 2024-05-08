@@ -1,14 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
     document.getElementById('next').addEventListener('click', generateQuestion);
-    document.getElementById('timer').textContent = "07:00"; // Initialize the timer display
-    generateQuestion(); // Initialize the first question
+    document.getElementById('explain').addEventListener('click', showExplanation);
+    document.getElementById('timer').textContent = "07:00";
+    generateQuestion();
 });
 
 let score = 0;
 let timer;
 let gameDuration = 420; // 7 minutes
 let timerStarted = false;
+let lastExplanation = '';
 
 function startTimer(duration) {
     if (!timerStarted) {
@@ -31,38 +33,39 @@ function endGame() {
     document.getElementById('answer').disabled = true;
     document.getElementById('submit').disabled = true;
     document.getElementById('next').style.display = 'none';
+    document.getElementById('explain').style.display = 'none';
 }
 
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
-    let nums = [];
-    for (let i = 0; i < 4; i++) { // Generate four numbers
-        nums.push(Math.floor(Math.random() * 9) + 1);
-    }
-    let expression = '';
-    nums.forEach((num, index) => {
-        if (index > 0) {
-            let op = ops[Math.floor(Math.random() * ops.length)];
-            expression += ` ${op} `;
-        }
-        expression += num;
-    });
+    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber(), getRandomNumber()];
+    let expression = nums[0].toString();
 
-    return addParentheses(expression);
+    for (let i = 1; i < nums.length; i++) {
+        const op = ops[Math.floor(Math.random() * ops.length)];
+        expression += ` ${op} ${nums[i]}`;
+    }
+
+    return addRandomParentheses(expression);
 }
 
-function addParentheses(expr) {
+function getRandomNumber() {
+    return Math.floor(Math.random() * 9) + 1; // Numbers from 1 to 9
+}
+
+function addRandomParentheses(expr) {
     const parts = expr.split(' ');
-    if (Math.random() > 0.5 && parts.length > 3) { // Only add parentheses if there are enough parts
-        let index = 1; // Start at the first operator
-        parts.splice(index, 2, '(' + parts[index] + parts[index + 1] + parts[index + 2] + ')');
+    if (Math.random() > 0.5 && parts.length > 5) {
+        let index = Math.floor(Math.random() * (parts.length - 4) / 2) * 2 + 1;
+        parts.splice(index, 0, '(');
+        parts.splice(index + 4, 0, ')');
     }
     return parts.join(' ');
 }
 
 function displayExpression(expression) {
     document.getElementById('question').innerText = 'Solve the expression: ' + expression.replace('*', '×').replace('/', '÷');
-    window.currentExpression = expression; // Store the original expression for evaluation
+    window.currentExpression = expression;
 }
 
 function generateQuestion() {
@@ -71,6 +74,7 @@ function generateQuestion() {
     document.getElementById('answer').value = '';
     document.getElementById('feedback').innerText = '';
     document.getElementById('next').style.display = 'none';
+    document.getElementById('explain').style.display = 'none';
 }
 
 function submitAnswer() {
@@ -83,9 +87,22 @@ function submitAnswer() {
     if (userAnswer === correctAnswer) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
         score++;
+        document.getElementById('explain').style.display = 'none';
     } else {
+        lastExplanation = generateExplanation(window.currentExpression.replace('×', '*').replace('÷', '/'));
         document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
+        document.getElementById('explain').style.display = 'block';
     }
     document.getElementById('score').innerText = `Score: ${score}`;
     document.getElementById('next').style.display = 'block';
+}
+
+function showExplanation() {
+    document.getElementById('feedback').innerText += ` Here's how to solve it: ${lastExplanation}`;
+    document.getElementById('explain').style.display = 'none'; // Hide after showing
+}
+
+function generateExplanation(expression) {
+    // Simplified explanation for illustration
+    return `Evaluate the expression step-by-step following PEMDAS/BODMAS rules, considering any parentheses to determine the order of operations.`;
 }
