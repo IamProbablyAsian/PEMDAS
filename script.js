@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
     document.getElementById('next').addEventListener('click', generateQuestion);
-    generateQuestion(); // Ensure the first question is generated immediately
+    generateQuestion(); // Ensures the first question is displayed on page load
 });
 
 let score = 0;
@@ -33,47 +33,35 @@ function endGame() {
 }
 
 function generateExpression() {
-    const ops = ['+', '-', '*', '/'];
-    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber()];
-    let expressionParts = [];
-    let formattedExpression = '';
+    const ops = ['+', '-', '*', '/']; // Operations array
+    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber()]; // Array of numbers
+    let expression = nums[0].toString();
 
-    nums.forEach((num, index) => {
-        if (index === 0) {
-            expressionParts.push(num);
+    for (let i = 1; i < nums.length; i++) {
+        let op = ops[Math.floor(Math.random() * ops.length)];
+        if (op === '/') {
+            nums[i] = expression.endsWith(')') ? eval(expression) * getRandomNumber() : nums[i - 1] * getRandomNumber();
+            expression = `(${expression} ${op} ${nums[i]})`;
         } else {
-            let op = ops[Math.floor(Math.random() * ops.length)];
-            if (op === '/') {
-                // Adjust for integer division
-                num = expressionParts[expressionParts.length - 1] * getRandomNumber();
-            }
-            expressionParts.push(op);
-            expressionParts.push(num);
+            expression += ` ${op} ${nums[i]}`;
         }
-    });
+    }
 
-    // Add parentheses for the first two operations to emphasize PEMDAS
-    formattedExpression = `(${expressionParts[0]} ${expressionParts[1]} ${expressionParts[2]}) ${expressionParts[3]} ${expressionParts[4]}`;
-
-    return {
-        expression: expressionParts.join(' '), // For evaluation
-        formattedExpression: formattedExpression.replace('*', '×').replace('/', '÷') // For display
-    };
+    return expression;
 }
 
 function getRandomNumber() {
-    return Math.floor(Math.random() * 9) + 1; // Numbers from 1 to 9
+    return Math.floor(Math.random() * 9) + 1; // Random number from 1 to 9
 }
 
-function displayExpression(formattedExpression) {
-    document.getElementById('question').innerText = 'Solve the expression: ' + formattedExpression;
-    window.currentExpression = formattedExpression.replace('×', '*').replace('÷', '/');
+function displayExpression(expression) {
+    document.getElementById('question').innerText = 'Solve the expression: ' + expression;
+    window.currentExpression = expression;
 }
 
 function generateQuestion() {
-    const { expression, formattedExpression } = generateExpression();
-    displayExpression(formattedExpression);
-    window.currentExpression = expression; // Ensure this matches eval() logic
+    const expression = generateExpression();
+    displayExpression(expression.replace('*', '×').replace('/', '÷')); // Display with correct math symbols
     document.getElementById('answer').value = '';
     document.getElementById('feedback').innerText = '';
 }
