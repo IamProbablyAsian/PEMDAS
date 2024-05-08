@@ -14,10 +14,9 @@ function startTimer(duration) {
     if (!timerStarted) {
         timerStarted = true;
         timer = duration;
-        let minutes, seconds;
         let timerInterval = setInterval(function() {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
+            let minutes = parseInt(timer / 60, 10);
+            let seconds = parseInt(timer % 60, 10);
             document.getElementById('timer').textContent = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
             if (--timer < 0) {
                 clearInterval(timerInterval);
@@ -35,18 +34,16 @@ function endGame() {
 }
 
 function generateExpression() {
-    const ops = ['+', '-', '*', '/'];
     let nums = [getRandomNumber()];
+    const ops = ['+', '-', '*', '/'];
     let expression = nums[0].toString();
 
     for (let i = 0; i < 3; i++) {
         const op = ops[Math.floor(Math.random() * ops.length)];
         let nextNum = getRandomNumber();
-
         if (op === '/') {
-            nextNum = nums[i] * (Math.floor(Math.random() * 3) + 1); // ensure divisibility
+            nextNum = nums[i] * (Math.floor(Math.random() * 3) + 1); // Ensure divisibility
         }
-
         nums.push(nextNum);
         expression += ` ${op} ${nextNum}`;
     }
@@ -55,12 +52,12 @@ function generateExpression() {
 }
 
 function getRandomNumber() {
-    return Math.floor(Math.random() * 9) + 1; // numbers from 1 to 9
+    return Math.floor(Math.random() * 9) + 1; // Numbers from 1 to 9
 }
 
 function displayExpression(expression) {
     document.getElementById('question').innerText = 'Solve the expression: ' + expression.replace('*', '×').replace('/', '÷');
-    window.currentExpression = expression; // store the original expression for evaluation
+    window.currentExpression = expression; // Store the original expression for evaluation
 }
 
 function generateQuestion() {
@@ -72,23 +69,21 @@ function generateQuestion() {
 }
 
 function submitAnswer() {
+    console.log("Submit button clicked."); // Debugging statement
     if (!timerStarted) {
         startTimer(gameDuration);
     }
-    const userAnswer = parseInt(document.getElementById('answer').value, 10);
+    const userAnswer = parseFloat(document.getElementById('answer').value);
     const correctAnswer = eval(window.currentExpression.replace('×', '*').replace('÷', '/'));
 
-    if (userAnswer === correctAnswer) {
+    console.log(`User Answer: ${userAnswer}, Correct Answer: ${correctAnswer}`); // Debugging statement
+
+    if (Math.abs(userAnswer - correctAnswer) < 0.01) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
         score++;
     } else {
-        document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}. Here's how you solve it: ${generateExplanation(window.currentExpression)}`;
+        document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
     }
     document.getElementById('score').innerText = `Score: ${score}`;
     document.getElementById('next').style.display = 'block';
-}
-
-function generateExplanation(expression) {
-    // Simplified dummy explanation generator (replace this with actual logic to generate step-by-step explanations)
-    return `Evaluate the expression carefully following PEMDAS/BODMAS rules.`;
 }
