@@ -71,10 +71,12 @@ function submitAnswer() {
         startTimer(gameDuration);
     }
 
-    const userAnswer = parseInt(document.getElementById('answer').value, 10);
+    const userAnswer = parseFloat(document.getElementById('answer').value); // Use parseFloat to handle decimal inputs
     try {
-        const correctAnswer = Math.floor(math.evaluate(window.currentExpression.replace('×', '*').replace('÷', '/')));
-        if (userAnswer === correctAnswer) {
+        const expressionResult = math.evaluate(window.currentExpression.replace('×', '*').replace('÷', '/'));
+        const correctAnswer = Math.round(expressionResult * 100) / 100; // Round to the nearest hundredth
+        
+        if (Math.abs(userAnswer - correctAnswer) < 0.01) { // Check if the answers match to within 0.01
             document.getElementById('feedback').innerText = 'Correct! Path cleared.';
             score++;
         } else {
