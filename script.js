@@ -56,8 +56,8 @@ function getRandomNumber() {
 }
 
 function displayExpression(expression) {
-    const displayExpression = expression.replace(/\*/g, '×').replace(/\//g, '÷');
-    document.getElementById('question').innerText = 'Solve the expression: ' + displayExpression;
+    const formattedExpression = expression.replace(/\*/g, '×');
+    document.getElementById('question').innerText = 'Solve the expression: ' + formattedExpression;
     window.currentExpression = expression;
 }
 
@@ -76,7 +76,7 @@ function submitAnswer() {
 
     const userAnswer = parseFloat(document.getElementById('answer').value);
     try {
-        const expressionResult = math.evaluate(window.currentExpression);
+        const expressionResult = math.evaluate(window.currentExpression.replace('×', '*'));
         const correctAnswer = Math.floor(expressionResult * 100) / 100; // Rounded down to the nearest hundredth
 
         if (Math.abs(userAnswer - correctAnswer) < 0.01) {
