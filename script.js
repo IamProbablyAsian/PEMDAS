@@ -36,37 +36,32 @@ function endGame() {
 }
 
 function generateExpression() {
-    const ops = ['+', '-', '*', '/']; // Include all basic operations
-    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber()];
+    const ops = ['+', '-', '*', '/']; // Basic operations
+    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber(), getRandomNumber()];
 
-    // Ensure multiplication and division involve easy, whole-number results
-    let multiplication = `${nums[0]} * ${nums[1]}`;
-    let division = `${nums[0] * nums[1]} / ${nums[1]}`; // Ensures division is clean
-
-    // Creating varied but controlled expressions
+    // Enhancing the complexity and inclusion of parentheses
     let expressions = [
-        `${nums[0]} + ${multiplication} - ${nums[2]}`,  // Addition, multiplication, subtraction
-        `${division} - ${nums[2]} + ${nums[0]}`,  // Division, subtraction, addition
-        `${nums[0]} - ${division} + ${nums[2]}`,  // Subtraction, division, addition
-        `${multiplication} + ${nums[0]} - ${nums[2]}` // Multiplication, addition, subtraction
+        `(${nums[0]} + ${nums[1]}) * ${nums[2]} - ${nums[3]}`,  // Parentheses around addition, followed by multiplication and subtraction
+        `${nums[0]} + (${nums[1]} * ${nums[2]}) - ${nums[3]}`,  // Multiplication inside parentheses, affected by addition and subtraction
+        `${nums[0]} - (${nums[1]} + ${nums[2]}) / ${nums[3]}`,  // Parentheses around addition inside a division
+        `(${nums[0]} * ${nums[1]}) / (${nums[2]} + ${nums[3]})`, // Both numerator and denominator in parentheses
+        `${nums[0]} / (${nums[1]} - ${nums[2]}) * ${nums[3]}`,  // Division by a parenthesized subtraction, followed by multiplication
+        `(${nums[0]} - ${nums[1]}) / (${nums[2]} * ${nums[3]})`  // Complex expression with subtraction and multiplication inside parentheses
     ];
 
-    // Randomly select one of the simpler expressions
+    // Randomly select one of the expressions that use parentheses
     return expressions[Math.floor(Math.random() * expressions.length)];
 }
 
 function getRandomNumber() {
-    return Math.floor(Math.random() * 9) + 2; // Numbers from 2 to 10 to avoid division by 1
+    return Math.floor(Math.random() * 20) + 1; // Numbers from 1 to 20 for varied complexity
 }
 
 function displayExpression(expression) {
-    // Enhance formatting to ensure proper HTML superscript rendering
     const formattedExpression = expression
         .replace(/\*/g, '×')
         .replace(/\//g, '÷')
-        // Correctly format exponentiation by wrapping exponents in <sup> tags
-        .replace(/(\d+)\^(\d+)/g, "$1<sup>$2</sup>");
-
+        .replace(/\^/g, '<sup>$1</sup>');
     document.getElementById('question').innerHTML = 'Solve the expression: ' + formattedExpression;
     window.currentExpression = expression; // Store the original expression for calculation
 }
