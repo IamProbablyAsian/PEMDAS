@@ -1,16 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
     document.getElementById('next').addEventListener('click', generateQuestion);
-    document.getElementById('explain').addEventListener('click', showExplanation);
-    document.getElementById('timer').textContent = "07:00"; // Initialize the timer display
-    generateQuestion();
+    generateQuestion(); // Ensure the first question is generated immediately
 });
 
 let score = 0;
 let timer;
 let gameDuration = 420; // 7 minutes
 let timerStarted = false;
-let lastExplanation = '';
 
 function startTimer(duration) {
     if (!timerStarted) {
@@ -32,46 +29,37 @@ function endGame() {
     document.getElementById('feedback').textContent = 'Time is up! Your final score is ' + score + '.';
     document.getElementById('answer').disabled = true;
     document.getElementById('submit').disabled = true;
-    document.getElementById('next').style.display = 'none';
-    document.getElementById('explain').style.display = 'none';
+    document.getElementById('next').disabled = true;
 }
 
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
-    let nums = [];
-    for (let i = 0; i < 4; i++) {
-        nums.push(getRandomNumber());
-    }
-    let expression = nums[0].toString();
+    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber()];
+    let expressionParts = [nums[0]];
 
     for (let i = 1; i < nums.length; i++) {
         let op = ops[Math.floor(Math.random() * ops.length)];
-        if (op === '/' && nums[i] !== 0) {  // Adjust division to ensure integer results
-            nums[i] = nums[i - 1] * (Math.floor(Math.random() * 5) + 1); // Ensure integer division
-        }
-        expression += ` ${op} ${nums[i]}`;
+        expressionParts.push(op);
+        expressionParts.push(nums[i]);
     }
 
-    return addRandomParentheses(expression);
+    // Insert parentheses to ensure the correct order of operations visually and functionally
+    if (Math.random() > 0.5) {
+        expressionParts.splice(2, 0, '(');
+        expressionParts.splice(5, 0, ')');
+    }
+
+    let expression = expressionParts.join(' ');
+    return expression;
 }
 
 function getRandomNumber() {
     return Math.floor(Math.random() * 9) + 1; // Numbers from 1 to 9
 }
 
-function addRandomParentheses(expr) {
-    const parts = expr.split(' ');
-    if (Math.random() > 0.5 && parts.length > 5) {
-        let index = Math.floor(Math.random() * (parts.length - 4) / 2) * 2 + 1;
-        parts.splice(index, 0, '(');
-        parts.splice(index + 4, 0, ')');
-    }
-    return parts.join(' ');
-}
-
 function displayExpression(expression) {
     document.getElementById('question').innerText = 'Solve the expression: ' + expression.replace('*', '×').replace('/', '÷');
-    window.currentExpression = expression;
+    window.currentExpression = expression.replace('×', '*').replace('÷', '/');
 }
 
 function generateQuestion() {
@@ -79,8 +67,6 @@ function generateQuestion() {
     displayExpression(expression);
     document.getElementById('answer').value = '';
     document.getElementById('feedback').innerText = '';
-    document.getElementById('next').style.display = 'none';
-    document.getElementById('explain').style.display = 'none';
 }
 
 function submitAnswer() {
@@ -88,26 +74,18 @@ function submitAnswer() {
         startTimer(gameDuration);
     }
     const userAnswer = parseInt(document.getElementById('answer').value, 10);
-    const correctAnswer = eval(window.currentExpression.replace('×', '*').replace('÷', '/'));
+    const correctAnswer = eval(window.currentExpression);
 
     if (userAnswer === correctAnswer) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
         score++;
-        document.getElementById('explain').style.display = 'none';
     } else {
-        lastExplanation = generateExplanation(window.currentExpression.replace('×', '*').replace('÷', '/'));
         document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
-        document.getElementById('explain').style.display = 'block';
     }
     document.getElementById('score').innerText = `Score: ${score}`;
-    document.getElementById('next').style.display = 'block';
 }
 
 function showExplanation() {
-    document.getElementById('feedback').innerText += ` Here's how to solve it: ${lastExplanation}`;
+    document.getElementById('feedback').innerText += ' This expression demonstrates the order of operations.';
     document.getElementById('explain').style.display = 'none'; // Hide after showing
-}
-
-function generateExplanation(expression) {
-    return `Evaluate the expression step-by-step following PEMDAS/BODMAS rules, considering any parentheses to determine the order of operations.`;
 }
