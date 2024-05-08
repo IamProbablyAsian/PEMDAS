@@ -60,11 +60,15 @@ function getRandomNumber() {
 }
 
 function displayExpression(expression) {
-    const formattedExpression = expression.replace(/\*/g, '×').replace(/\//g, '÷');
-    document.getElementById('question').innerText = 'Solve the expression: ' + formattedExpression;
+    // This function converts expression operations into HTML friendly format
+    const formattedExpression = expression
+        .replace(/\*/g, '×')
+        .replace(/\//g, '÷')
+        .replace(/\^/g, '<sup>') + '</sup>'; // Adding superscript tags around exponent
+
+    document.getElementById('question').innerHTML = 'Solve the expression: ' + formattedExpression; // Use innerHTML to interpret HTML
     window.currentExpression = expression; // Store the original expression for calculation
 }
-
 
 function generateQuestion() {
     const newExpression = generateExpression();
