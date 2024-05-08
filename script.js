@@ -37,8 +37,8 @@ function endGame() {
 
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
-    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber()];
-    let expression = `(${nums[0]} ${ops[Math.floor(Math.random() * ops.length)]} ${nums[1]}) ${ops[Math.floor(Math.random() * ops.length)]} ${nums[2]}`;
+    let nums = [getRandomNumber(), getRandomNumber()];
+    let expression = `(${nums[0]} ${ops[Math.floor(Math.random() * ops.length)]} ${nums[1]})`;
     return expression;
 }
 
