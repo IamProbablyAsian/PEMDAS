@@ -36,20 +36,23 @@ function endGame() {
 }
 
 function generateExpression() {
-    // Define operations and higher complexity by including exponents
-    const ops = ['+', '-', '*', '/', '**'];
-    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber(), getRandomNumber()];
-    // Creating more complex expressions including parentheses and exponents
-    let expression = `${nums[0]} ${ops[Math.floor(Math.random() * (ops.length - 1))]} ( ${nums[1]} ${ops[Math.floor(Math.random() * (ops.length - 1))]} ${nums[2]} ) ${ops[Math.floor(Math.random() * (ops.length - 1))]} ${nums[3]}`;
-    // Introduce an exponent in one of the terms randomly
-    if (Math.random() > 0.5) {  // 50% chance to add an exponent to the second term
-        expression = `${nums[0]} ${ops[Math.floor(Math.random() * (ops.length - 1))]} ( ${nums[1]} ** ${getRandomSmallNumber()} ) ${ops[Math.floor(Math.random() * (ops.length - 1))]} ${nums[3]}`;
-    }
-    return expression;
+    const ops = ['+', '-', '*', '**']; // Simplified operations list
+    let nums = [getRandomNumber(), getRandomNumber(), getRandomNumber()];
+    
+    // Predefined simpler expressions
+    let expressions = [
+        `${nums[0]} + ${nums[1]} * ${nums[2]}`,
+        `${nums[0]} - ${nums[1]} + ${nums[2]}`,
+        `${nums[0]} ** 2 - ${nums[1]}`,
+        `${nums[0]} * ${nums[1]} - ${nums[2]}`
+    ];
+
+    // Randomly select one of the expressions
+    return expressions[Math.floor(Math.random() * expressions.length)];
 }
 
-function getRandomSmallNumber() {
-    return Math.floor(Math.random() * 3) + 2; // Random small number from 2 to 4 for exponents
+function getRandomNumber() {
+    return Math.floor(Math.random() * 20) + 1; // Random number from 1 to 20 for varied complexity
 }
 
 function displayExpression(expression) {
@@ -71,12 +74,12 @@ function submitAnswer() {
         startTimer(gameDuration);
     }
 
-    const userAnswer = parseFloat(document.getElementById('answer').value); // Use parseFloat to handle decimal inputs
+    const userAnswer = parseFloat(document.getElementById('answer').value);
     try {
-        const expressionResult = math.evaluate(window.currentExpression.replace('×', '*').replace('÷', '/'));
-        const correctAnswer = Math.round(expressionResult * 100) / 100; // Round to the nearest hundredth
-        
-        if (Math.abs(userAnswer - correctAnswer) < 0.01) { // Check if the answers match to within 0.01
+        const expressionResult = math.evaluate(window.currentExpression);
+        const correctAnswer = Math.floor(expressionResult * 100) / 100; // Rounded down to the nearest hundredth
+
+        if (Math.abs(userAnswer - correctAnswer) < 0.01) {
             document.getElementById('feedback').innerText = 'Correct! Path cleared.';
             score++;
         } else {
