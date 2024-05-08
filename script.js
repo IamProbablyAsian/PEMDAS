@@ -66,13 +66,17 @@ function submitAnswer() {
     }
 
     const userAnswer = parseInt(document.getElementById('answer').value, 10);
-    const correctAnswer = Math.floor(eval(window.currentExpression.replace('×', '*').replace('÷', '/')));
-
-    if (userAnswer === correctAnswer) {
-        document.getElementById('feedback').innerText = 'Correct! Path cleared.';
-        score++;
-    } else {
-        document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
+    try {
+        const correctAnswer = Math.floor(math.evaluate(window.currentExpression.replace('×', '*').replace('÷', '/')));
+        if (userAnswer === correctAnswer) {
+            document.getElementById('feedback').innerText = 'Correct! Path cleared.';
+            score++;
+        } else {
+            document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
+        }
+    } catch (e) {
+        document.getElementById('feedback').innerText = 'Error in calculating the answer. Please check the expression format.';
+        console.error("Error evaluating expression:", e);
     }
 
     document.getElementById('score').innerText = `Score: ${score}`;
