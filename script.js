@@ -38,16 +38,21 @@ function endGame() {
 
 function generateExpression() {
     const ops = ['+', '-', '*', '/'];
+    let nums = [];
     let expression = '';
-    let nums = [Math.floor(Math.random() * 9) + 1];
-    for (let i = 0; i < 3; i++) {
-        const op = ops[Math.floor(Math.random() * ops.length)];
-        let nextNum = Math.floor(Math.random() * 9) + 1;
-        nums.push(nextNum);
-        expression += ` ${op} ${nextNum}`;
+    for (let i = 0; i < 4; i++) {
+        nums.push(Math.floor(Math.random() * 9) + 1);
     }
-    window.currentStepByStep = generateStepByStep(nums, ops); // Store step-by-step explanation
-    return `${nums[0]}${expression}`;
+    let parenthesesIndex = Math.floor(Math.random() * 2); // Choose random index to place parentheses
+
+    if (parenthesesIndex === 0) { // Apply parentheses around the first two operations
+        expression = `(${nums[0]} ${ops[Math.floor(Math.random() * ops.length)]} ${nums[1]}) ${ops[Math.floor(Math.random() * ops.length)]} ${nums[2]} ${ops[Math.floor(Math.random() * ops.length)]} ${nums[3]}`;
+    } else { // Apply parentheses around the last two operations
+        expression = `${nums[0]} ${ops[Math.floor(Math.random() * ops.length)]} (${nums[1]} ${ops[Math.floor(Math.random() * ops.length)]} ${nums[2]}) ${ops[Math.floor(Math.random() * ops.length)]} ${nums[3]}`;
+    }
+
+    window.currentStepByStep = generateStepByStep(expression); // Store step-by-step explanation
+    return expression;
 }
 
 function displayExpression(expression) {
@@ -56,15 +61,10 @@ function displayExpression(expression) {
     window.currentExpression = expression; // Store the original expression for evaluation
 }
 
-function generateStepByStep(nums, ops) {
-    let steps = `Start with ${nums[0]}`;
-    let result = nums[0];
-    for (let i = 0; i < ops.length; i++) {
-        let interimResult = eval(`${result} ${ops[i]} ${nums[i + 1]}`);
-        steps += `. Then ${ops[i].replace('*', 'multiply').replace('/', 'divide')} by ${nums[i + 1]} to get ${interimResult}`;
-        result = interimResult;
-    }
-    return steps + '.';
+function generateStepByStep(expression) {
+    // Generate a detailed step-by-step explanation based on the final expression
+    let result = eval(expression);
+    return `Evaluate the expression step by step to get ${result}. Remember PEMDAS rules.`;
 }
 
 function generateQuestion() {
@@ -79,10 +79,10 @@ function submitAnswer() {
     if (!timerStarted) {
         startTimer(gameDuration);
     }
-    const userAnswer = parseFloat(document.getElementById('answer').value);
-    const correctAnswer = eval(window.currentExpression);
+    const userAnswer = parseInt(document.getElementById('answer').value, 10);
+    const correctAnswer = eval(window.currentExpression.replace('×', '*').replace('÷', '/'));
 
-    if (Math.abs(userAnswer - correctAnswer) < 0.01) {
+    if (userAnswer === correctAnswer) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
         score++;
     } else {
