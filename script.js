@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('submit').addEventListener('click', submitAnswer);
-    document.getElementById('next').addEventListener('click', generateQuestion);
     generateQuestion(); // Ensures the first question is displayed on page load
+    document.getElementById('next').style.display = 'none'; // Hide next button initially
 });
 
 let score = 0;
@@ -40,10 +40,12 @@ function generateExpression() {
     for (let i = 1; i < nums.length; i++) {
         let op = ops[Math.floor(Math.random() * ops.length)];
         if (op === '/') {
-            nums[i] = expression.endsWith(')') ? eval(expression) * getRandomNumber() : nums[i - 1] * getRandomNumber();
-            expression = `(${expression} ÷ ${nums[i]})`;
+            // Adjust divisor to ensure integer division
+            let newDivisor = expression.endsWith(')') ? eval(expression) : nums[i - 1];
+            nums[i] = newDivisor * getRandomNumber();
+            expression = `(${expression} / ${nums[i]})`;
         } else {
-            expression += ` ${op.replace('*', '×')} ${nums[i]}`;
+            expression += ` ${op} ${nums[i]}`;
         }
     }
 
@@ -56,7 +58,7 @@ function getRandomNumber() {
 
 function displayExpression(expression) {
     document.getElementById('question').innerText = 'Solve the expression: ' + expression;
-    window.currentExpression = expression.replace('×', '*').replace('÷', '/');
+    window.currentExpression = expression;
 }
 
 function generateQuestion() {
@@ -76,6 +78,7 @@ function submitAnswer() {
     if (userAnswer === correctAnswer) {
         document.getElementById('feedback').innerText = 'Correct! Path cleared.';
         score++;
+        document.getElementById('next').style.display = 'block'; // Show next button after first correct answer
     } else {
         document.getElementById('feedback').innerText = `Incorrect. The correct answer was ${correctAnswer}.`;
     }
